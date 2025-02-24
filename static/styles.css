@@ -1,0 +1,362 @@
+:root {
+    --button-purple: #ad5389;
+    --button-hoover: #3c1053;
+    --old-blue: #86b7fe;
+  }
+
+
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    /* background-color: #E8E8E8; */
+    background: linear-gradient(to bottom,  #ad5389, #3c1053);
+    margin: 15px;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom,  #ad5389, #3c1053);
+    z-index: -1;
+  }
+
+
+.main-container, .main-container-results{
+    max-width: 700px;
+    width: 100%;
+    background-color: #f5f5f5;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    margin-top: 30px;
+    box-shadow: rgb(63 63 63) 0px -4px 24px 0px;
+}
+
+
+.main-container-app{
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #f5f5f5;
+}
+
+.main-container-results {
+    margin: 0;
+}
+
+.availabilityApp{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.title-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+.title-image-container {
+    width: 30%;
+}
+
+.title-image {
+    height: 100%;
+    width: 100%;
+}
+
+.input-txt{
+    box-sizing: border-box;
+    width: 100%;
+    padding: 6px 12px;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    appearance: none;
+    border-radius: 4px;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    margin-bottom: 20px;
+}
+
+.input-txt:focus{
+    color: #212529;
+    background-color: #fff;
+    border-color: var(--button-hoover);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgb(129 0 67 / 25%);
+}
+
+.form-button{
+    width: 100%;
+    cursor: pointer;
+    outline: 0;
+    color: #fff;
+    background-color: var(--button-purple);
+    border-color: var(--button-purple);
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 16px;
+    border-radius: .40rem;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.form-button:hover {
+    color: #fff;
+    background-color: var(--button-hoover);
+    border-color: var(--button-hoover);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+
+.radio-wrapper-1 {
+    color: #212529;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.radio-wrapper-1 label {
+    display: inline-block;
+    padding-left: .25em;
+}
+
+.radio-wrapper-1 input[type=radio] {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    margin-bottom: 0;
+    margin-right: 0;
+}
+
+.radio-wrapper-1 input[type=radio] {
+    background-position: center center;
+    appearance: none;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-size: contain;
+    border: 1px solid rgba(0, 0, 0, .25);
+    height: 1em;
+    margin-top: .25em;
+    vertical-align: top;
+    width: 1em;
+    border-radius: 50%;
+}
+
+.radio-wrapper-1 input[type=radio]:active {
+    filter: brightness(90%);
+}
+
+.radio-wrapper-1 input[type=radio]:focus {
+    border-color: #86b7fe;
+    box-shadow: rgba(13, 110, 253, .25) 0 0 0 .25rem;
+    outline: 0;
+}
+
+.radio-wrapper-1 input[type=radio]:checked {
+    background-color: #0c557c;
+    border-color: #0c557c;
+}
+
+/* .radio-wrapper-1 input[type=radio]:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+} */
+
+.radio-wrapper-1 input[type=radio]:disabled {
+    filter: none;
+    opacity: .5;
+    pointer-events: none;
+}
+
+.radio-wrapper-1 input[type=radio]:disabled ~ label {
+    opacity: .5;
+}
+
+.label-radios{
+    margin: 5px 5px 5px 0;
+}
+
+.container{
+    position: relative;
+}
+
+.card-container{
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 16px;
+    border: 2px solid #3c1053;
+    margin: 25px 0;
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+}
+
+.card-container:hover{
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 7px 8px;
+    border: 3px solid #661490;
+}
+
+.card-body-container{
+    width: 80%;
+    margin-left: 15px ;
+}
+
+.card-icon-container{
+    width: 15%;
+}
+
+.card-title{
+    margin: 0 auto ;
+}
+
+.card-body{
+    padding: 5px 0;
+    margin-top: 8px;
+}
+
+.card-icon-container{
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+.card-span-button{
+    position: absolute;
+    bottom: 25px;
+    right: 56px;
+    background-color: var(--button-hoover);
+    color: #EEE;
+    border-radius: 25px;
+    position: absolute;
+    bottom: 25px;
+    right: 50px;
+    font-size: small;
+    text-align: center;
+    line-height: 1.6;
+    width: 74px;
+    height: 27px;
+    cursor: pointer;
+  }
+
+.card-span-button:hover{
+    box-shadow: rgb(0 0 0 / 51%) 0px 4px 20px 2px;
+    /* background-color: #661490; */
+    font-weight: bold;
+}
+
+.form-container {
+    margin-bottom: 35px;
+    width: 70%;
+}
+
+.arrow-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    max-height: 30px;
+}
+
+.arrow{
+    color: var(--button-purple);
+    cursor: pointer;
+    display: none;
+}
+
+.arrow-icon:hover{
+    color: var(--button-hoover);
+    stroke-width: 3;
+}
+
+
+
+/* Estilos para filtros */
+
+.radio-inputs {
+    margin: 18px;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: 0.5rem;
+    background-color: #EEE;
+    box-sizing: border-box;
+    box-shadow: 0 0 0px 1px rgba(0, 0, 0, 0.06);
+    padding: 0.25rem;
+    width: 300px;
+    font-size: 14px;
+  }
+  
+  .radio-inputs .radio {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+  
+  .radio-inputs .radio input {
+    display: none;
+  }
+  
+  .radio-inputs .radio .name {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border: none;
+    padding: .5rem 0;
+    color: rgba(51, 65, 85, 1);
+    transition: all .15s ease-in-out;
+  }
+  
+  .radio-inputs .radio input:checked + .name {
+    background-color: var(--button-hoover);
+    font-weight: 600;
+    color: #fff;
+  }
+
+  /* Media queries */
+  @media (width <= 500px) {
+    /* … */
+    .title-container{
+        flex-direction: column;
+    }
+
+    .form-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .availabilityApp {
+        width: 100%;
+  }
+
+    .card-span-button{
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        height: 35px;
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+        line-height: 30px;
+    }
+
+}

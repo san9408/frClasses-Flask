@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="shortcut icon" href="#">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mis clases</title>
+  </head>
+  <body>
+    <div class="main-container" id="root">
+        <div class="main-container-app">
+            
+            <div class="title-container">
+                <div class="title-image-container">
+                    <img class="title-image" src="{{ url_for('static', filename='Images/Online Language Course Illustration.png') }}" alt=""> 
+                </div> 
+                <div class="form-container">
+                    <h1 class="">Consulta de clases</h1>
+                        <input name="input-id" class="input-txt" id="input-id" type="text" placeholder="Ingresa tu id" />
+                        <button type="button" class="form-button" onclick="getInputValue(event)">Ver clases</button>
+                </div>                
+            </div>            
+         </div>
+         <div class="arrow-container">
+            <svg id="arrow-down" class="arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path class="arrow-icon" stroke-linecap="round" stroke-linejoin="round" d="m4.5 5.25 7.5 7.5 7.5-7.5m-15 6 7.5 7.5 7.5-7.5" />
+            </svg>              
+        </div>
+    </div>
+
+    <div class="availabilityApp" id="app"></div>
+
+    <script src="{{ url_for('static', filename='node_modules/animejs/lib/anime.min.js')}}"></script>
+    <script type="module" src="{{url_for('static', filename='interaction.js')}}"></script>
+  </body>
+</html>
