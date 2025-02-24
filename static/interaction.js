@@ -17,14 +17,21 @@ function formatDate(dateISO) {
 
     let myDate = new Date(dateISO);
 
-    let optionsDate = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Bogota' };
-    let optionsHour = { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/Bogota' };
+    let optionsDate = { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric', 
+    };
 
-    let formatDate = new Intl.DateTimeFormat('es-ES', optionsDate);
-    let formatHour = new Intl.DateTimeFormat('es-ES', optionsHour);
+    let optionsHour = { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: true, 
+    };
 
-    let formatedDate = formatDate.format(myDate);
-    let formatedHour = formatHour.format(myDate);
+    let formatedDate = myDate.toLocaleDateString('es-ES', optionsDate);
+    let formatedHour = myDate.toLocaleTimeString('es-ES', optionsHour);
 
     return `El ${formatedDate} a las ${formatedHour} hora Colombia`;
 }
@@ -43,6 +50,8 @@ function logIn(userId){
     .then(data => {
 
         dataClasses = data
+
+        console.log(dataClasses)
 
         if (dataClasses.available.length > 0){
             //Llamar funcion para crear container principales
