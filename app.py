@@ -6,7 +6,7 @@ import pytz
 
 time_zone = pytz.timezone("America/Bogota") # Europe/Paris 
 date_time_zone = datetime.datetime.now(time_zone)
-date_time_zone_extra_min = date_time_zone + datetime.timedelta(minutes=1)
+date_time_zone_extra_min = date_time_zone + datetime.timedelta(minutes=5)
 date_formated = f'{date_time_zone_extra_min.strftime('%Y-%m-%dT%H:%M:%S')}'
 date_beauty = f'{date_time_zone_extra_min.strftime('%a, %d %b %Y %H:%M')}'
 
