@@ -33,7 +33,28 @@ function formatDate(dateISO) {
     let formatedDate = myDate.toLocaleDateString('es-ES', optionsDate);
     let formatedHour = myDate.toLocaleTimeString('es-ES', optionsHour);
 
-    return `El ${formatedDate} a las ${formatedHour} hora Colombia`;
+    return {formatedDate: formatedDate, formatedHour: formatedHour};
+}
+
+function formatData(data){
+
+  const grouped = data.reduce((acc, item) => {
+    const dateKey = item.start_date.split("T")[0]
+    if (!acc[dateKey]) {
+      acc[dateKey] = [];
+    }
+    acc[dateKey].push(item);
+    return acc;
+  }, {});
+  
+  const sortedGrouped = Object.keys(grouped)
+    .sort()
+    .map(date => ({
+      start_date: date,
+      elements: grouped[date]
+    }));
+
+    return sortedGrouped
 }
 
 let dataClasses = {}
@@ -50,25 +71,32 @@ function logIn(userId){
     .then(data => {
 
         dataClasses = data
-
-        console.log(dataClasses)
+        console.log(data)
 
         if (dataClasses.available.length > 0){
 
-            dataClasses.available.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
+            //formatear array
+            let newDataAvailable = formatData(dataClasses.available)
+            console.log('available: ', newDataAvailable)
+
+            newDataAvailable.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
             //Llamar funcion para crear container principales
             let container = createContainersAndFilters('avail')
             //Llamar funcion createCards() enviando data para iterar
-            createCards(dataClasses.available, container, 'avail')
+            createCards(newDataAvailable, container, 'avail')
             addFilterEventListeners()
 
         } else if (dataClasses.reserved.length > 0){
 
-            dataClasses.reserved.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+            //formatear array
+            let newDataReserved = formatData(dataClasses.reserved)
+            console.log('reserved: ', newDataReserved)
+
+            newDataReserved.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
             //Llamar funcion para crear container principales
             let container = createContainersAndFilters('reserved')
             //Llamar funcion createCards() enviando data para iterar
-            createCards(dataClasses.reserved, container, 'reserved')
+            createCards(newDataReserved, container, 'reserved')
             addFilterEventListeners()
 
             } else {
@@ -85,7 +113,10 @@ function addFilterEventListeners(){
 
         removeMainContainer()
         let containerR = createContainersAndFilters('avail')
-        createCards(dataClasses.available, containerR, 'avail')
+        //formatear array
+        let newDataAvailable = formatData(dataClasses.available)
+        console.log('available: ', newDataAvailable)
+        createCards(newDataAvailable, containerR, 'avail')
 
     })
 
@@ -94,7 +125,10 @@ function addFilterEventListeners(){
 
         removeMainContainer()
         let containerR = createContainersAndFilters('reserved')
-        createCards(dataClasses.reserved, containerR, 'reserved')
+        //formatear array
+        let newDataReserved = formatData(dataClasses.reserved)
+        console.log('reserved: ', newDataReserved)
+        createCards(newDataReserved, containerR, 'reserved')
 
 })
 
@@ -111,16 +145,16 @@ function createContainersAndFilters(type){
         const containerResults = document.createElement('div')
         containerResults.classList.add('main-container-results')
         
-        // Create main container for filters
-        const containerMainFilters = document.createElement('div')
-        containerMainFilters.setAttribute('x-data', 'scheduleFilter()')
-        containerMainFilters.setAttribute('x-init', 'init()')
-        containerMainFilters.classList.add('container-filters-results')
-        containerResults.appendChild(containerMainFilters)
+        // // Create main container for filters
+        // const containerMainFilters = document.createElement('div')
+        // containerMainFilters.setAttribute('x-data', 'scheduleFilter()')
+        // containerMainFilters.setAttribute('x-init', 'init()')
+        // containerMainFilters.classList.add('container-filters-results')
+        // containerResults.appendChild(containerMainFilters)
 
 
         if (!filtersExist){
-            //create container filters
+            //create radio container filters disponibles or programadas
             const filtersContainer = document.createElement('div')
             filtersContainer.classList.add('radio-inputs')
 
@@ -132,7 +166,7 @@ function createContainersAndFilters(type){
             inputFilter1.type = "radio"
             inputFilter1.name = "radio"
             inputFilter1.id = "available"
-            if (type==='avail') {
+            if (typeRequest==='avail') {
                 inputFilter1.checked = true
             }
 
@@ -152,7 +186,8 @@ function createContainersAndFilters(type){
             inputFilter2.type = "radio"
             inputFilter2.name = "radio"
             inputFilter2.id = "reserved"
-            if (type!='avail') {
+            
+            if (typeRequest!='avail') {
                 inputFilter2.checked = true
             }
 
@@ -171,7 +206,7 @@ function createContainersAndFilters(type){
         const pageSubtitle = document.createElement('h2')
         pageSubtitle.classList.add('subtitle')
 
-        if (type==='avail'){
+        if (typeRequest==='avail'){
             pageSubtitle.innerText = "Clases disponibles"
         } else {
             pageSubtitle.innerText = "Clases programadas"
@@ -194,51 +229,68 @@ function createContainersAndFilters(type){
 
 function createCards(data, containerR, typeRequest){    
     // Loop for creating cards
+    console.log(data)
+
     data.forEach((item) => {
+      const details = document.createElement('details')
+      details.classList.add('details')
 
-        createButton().then(svgData => {
 
-                const container = document.createElement('div')
-                container.classList.add('container')
-                
-                const cardContainer = document.createElement('div')
-                cardContainer.classList.add('card-container')
+      const summary = document.createElement('summary')
+      summary.classList.add('summary')
+      let formatedDate = formatDate(item.start_date)
+      summary.innerText = `Clases para ${formatedDate.formatedDate}`               
 
-                const iconCalendarContainer = document.createElement('div')
-                iconCalendarContainer.classList.add('card-icon-container')
-                iconCalendarContainer.innerHTML = svgData
+      const elements = item.elements
 
-                if (typeRequest==='avail'){
-                    const spanButton = document.createElement('span')
-                    spanButton.classList.add('card-span-button')
-                    spanButton.innerText = 'Registrar'
-                    container.append(spanButton)
-                }
-                
-                const cardBodyContainer = document.createElement('div')
-                cardBodyContainer.classList.add('card-body-container')
-        
-                const title = document.createElement('h3')
-                title.classList.add('card-title')
-                title.innerText = item.teacher_name
-        
-                const classDate = document.createElement('p')
-                classDate.classList.add('card-body')
-                let formatedDate = formatDate(item.start_date)
-                classDate.innerText = formatedDate
+      elements.forEach((element)=>{
 
-                cardBodyContainer.append(title, classDate)
-                cardContainer.append(iconCalendarContainer, cardBodyContainer)
-                container.append(cardContainer)
-                containerR.append(container)
-        
-                var arrowButton = document.querySelector('.arrow')
-                arrowButton.style.display = 'block'
+          const container = document.createElement('div')
+          container.classList.add('container')
 
-                
-                });
+          const cardBar = document.createElement('div')
+          cardBar.classList.add('card-bar')
+          container.append(cardBar)
+          
+          const cardContainer = document.createElement('div')
+          cardContainer.classList.add('card-container')
 
+          // const iconCalendarContainer = document.createElement('div')
+          // iconCalendarContainer.classList.add('card-icon-container')
+          // iconCalendarContainer.innerHTML = svgData
+          
+          const cardBodyContainer = document.createElement('div')
+          cardBodyContainer.classList.add('card-body-container')
+  
+          const title = document.createElement('h3')
+          title.classList.add('card-title')
+          title.innerText = element.teacher_name
+  
+          const classDate = document.createElement('p')
+          classDate.classList.add('card-body')
+          let formatedDate = formatDate(element.start_date)
+          classDate.innerText = `El ${formatedDate.formatedDate} a las ${formatedDate.formatedHour} hora Colombia` 
+         
+          cardBodyContainer.append(title, classDate)
+          cardContainer.append(cardBodyContainer)
+          container.append(cardContainer)
+          details.append(container)
+
+          if (typeRequest==='avail'){
+            const spanButton = document.createElement('div')
+            spanButton.classList.add('card-span-button')
+            spanButton.innerText = 'Registrar'
+            cardContainer.append(spanButton)
+        }
+
+      })
+
+      details.append(summary)
+      containerR.append(details)  
+      
     })
+    var arrowButton = document.querySelector('.arrow')
+    arrowButton.style.display = 'block'
 }
 
 function menuAnimation(){

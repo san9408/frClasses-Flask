@@ -199,23 +199,30 @@ body::before {
 .card-container{
     box-sizing: border-box;
     width: 100%;
-    border-radius: 16px;
-    border: 2px solid #3c1053;
-    margin: 25px 0;
-    padding: 25px;
+    border-radius: 8px;
+    margin: 10px 0;
+    padding: 15px;
     display: flex;
     justify-content: space-between;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+    box-shadow: rgba(0, 0, 0, 0.47) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+    align-items: center;
+    background-color: #EEE;
 }
 
-.card-container:hover{
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 7px 8px;
-    border: 3px solid #661490;
+.card-bar{
+    width: 10px;
+  background-color: var(--button-hoover);
+  height: 100%;
+  display: block;
+  position: absolute;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
 }
 
 .card-body-container{
     width: 80%;
     margin-left: 15px ;
+    font-size: 15px;
 }
 
 .card-icon-container{
@@ -238,15 +245,13 @@ body::before {
 }
 
 .card-span-button{
-    position: absolute;
     bottom: 25px;
     right: 56px;
     background-color: var(--button-hoover);
     color: #EEE;
-    border-radius: 25px;
-    position: absolute;
-    bottom: 25px;
-    right: 50px;
+    border-radius: 11px;
+    bottom: 42%;
+    right: 4%;
     font-size: small;
     text-align: center;
     line-height: 1.6;
@@ -257,7 +262,7 @@ body::before {
   }
 
 .card-span-button:hover{
-    box-shadow: rgb(0 0 0 / 51%) 0px 4px 20px 2px;
+    /* box-shadow: rgb(0 0 0 / 51%) 0px 4px 20px 2px; */
     /* background-color: #661490; */
     font-weight: bold;
 }
@@ -291,7 +296,6 @@ body::before {
 
 .radio-inputs {
     margin: 18px;
-    position: relative;
     display: flex;
     flex-wrap: wrap;
     border-radius: 0.5rem;
@@ -330,6 +334,35 @@ body::before {
     color: #fff;
   }
 
+  .details{
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    cursor: pointer;
+    color: rgba(51, 65, 85, 1);
+    font-size: 15px;
+}
+
+.details[open] {
+    background-color: #ad538966;
+  }
+
+.details[open] .summary{
+    color: var(--button-hoover);
+    font-weight: bold;
+}
+
+.details:hover{
+    background-color: #ad538966;
+}
+
+.summary:hover{
+    color: var(--button-hoover);
+    font-weight: bold;
+    cursor: pointer;
+}
+  
+
   /* Media queries */
   @media (width <= 500px) {
     /* … */
@@ -353,11 +386,11 @@ body::before {
         right: 0;
         width: 100%;
         height: 35px;
-        border-top-right-radius: 0;
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 16px;
-        border-bottom-right-radius: 16px;
         line-height: 30px;
     }
 
+    .card-container{
+        display: flex;
+        flex-direction: column;
+    }
 }
