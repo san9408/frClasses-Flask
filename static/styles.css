@@ -253,6 +253,7 @@ body::before {
     width: 74px;
     height: 27px;
     cursor: pointer;
+    line-height: 23px;
   }
 
 .card-span-button:hover{

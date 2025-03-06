@@ -27,7 +27,7 @@ function formatDate(dateISO) {
     let optionsHour = { 
         hour: '2-digit', 
         minute: '2-digit', 
-        hour12: true, 
+        // hour12: true, 
     };
 
     let formatedDate = myDate.toLocaleDateString('es-ES', optionsDate);
@@ -54,6 +54,8 @@ function logIn(userId){
         console.log(dataClasses)
 
         if (dataClasses.available.length > 0){
+
+            dataClasses.available.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
             //Llamar funcion para crear container principales
             let container = createContainersAndFilters('avail')
             //Llamar funcion createCards() enviando data para iterar
@@ -62,6 +64,7 @@ function logIn(userId){
 
         } else if (dataClasses.reserved.length > 0){
 
+            dataClasses.reserved.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
             //Llamar funcion para crear container principales
             let container = createContainersAndFilters('reserved')
             //Llamar funcion createCards() enviando data para iterar
@@ -107,6 +110,14 @@ function createContainersAndFilters(type){
         // Create main container for filters
         const containerResults = document.createElement('div')
         containerResults.classList.add('main-container-results')
+        
+        // Create main container for filters
+        const containerMainFilters = document.createElement('div')
+        containerMainFilters.setAttribute('x-data', 'scheduleFilter()')
+        containerMainFilters.setAttribute('x-init', 'init()')
+        containerMainFilters.classList.add('container-filters-results')
+        containerResults.appendChild(containerMainFilters)
+
 
         if (!filtersExist){
             //create container filters
@@ -277,3 +288,4 @@ function removeMainContainer(){
     let availabilityContainer = document.querySelector('.main-container-results')
     availabilityContainer.remove()
 }
+

@@ -10,6 +10,8 @@ date_time_zone_extra_min = date_time_zone + datetime.timedelta(minutes=5)
 date_formated = f'{date_time_zone_extra_min.strftime('%Y-%m-%dT%H:%M:%S')}'
 date_beauty = f'{date_time_zone_extra_min.strftime('%a, %d %b %Y %H:%M')}'
 
+print(date_formated)
+
 url_get_token = 'https://back-spc.azurewebsites.net/api/v1/auth/login'
 url_get_class = f'https://back-spc.azurewebsites.net/api/v1/class?start_date={date_formated}&type=REGULAR'
 url_get_reserved_class = f'https://back-spc.azurewebsites.net/api/v1/class?start_date={date_formated}&type=REGISTERED'
