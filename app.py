@@ -29,19 +29,6 @@ def log_in():
     else:
         return jsonify({"error": "Formato no válido, usa JSON"}), 415
     
-# @app.route("/getClassDetails", methods=["POST"])
-# def log_in(classId):
-#     url_get_class_details = f"https://back-spc.azurewebsites.net/api/v1/class/{class_id}/session"
-
-#     if request.is_json:
-#         data = request.get_json()
-#         userId = data.get("userId")
-#         token = log_in_token(userId)
-#         classes = get_classes(token, url_get_class_details)
-#         return jsonify(classes)
-#     else:
-#         return jsonify({"error": "Formato no válido, usa JSON"}), 415
-
 def log_in_token(user):
     url_get_token = 'https://back-spc.azurewebsites.net/api/v1/auth/login'
     url = url_get_token
@@ -62,8 +49,19 @@ def get_classes(token, class_url_availabe, class_url_reserved):
     response_class_reserved = json.loads(get_class_reserved.text)
     classes['available'] = response_class
     classes['reserved'] = response_class_reserved
+
+    for class_item in classes['reserved']:
+        details = get_class_details(class_item['id'], token)
+        class_item['classDetails'] = details
+
     print(classes)
     return classes
+
+def get_class_details(classId, token):
+    url_get_class_details = f"https://back-spc.azurewebsites.net/api/v1/class/{classId}/session"
+    get_class_reserved_details = requests.get(url_get_class_details, headers={'Authorization': 'Bearer ' + token})
+    response_class_reserved_details = json.loads(get_class_reserved_details.text)
+    return response_class_reserved_details
 
 def format_date():
     time_zone = pytz.timezone("America/Bogota") # Europe/Paris 

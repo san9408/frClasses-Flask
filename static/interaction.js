@@ -106,20 +106,6 @@ function logIn(userId){
     })
 }
 
-// function logIn(classId){
-
-//     fetch('/getClassDetails', {
-//         method: 'POST', 
-//         headers: { 
-//             'Content-Type': 'application/json'
-//         }, 
-//         body: JSON.stringify({'class': classId})})
-//     .then(response => response.json())
-//     .then(data => {
-
-//     })
-// }
-
 function addFilterEventListeners(){
 
     const availRadioButtons = document.getElementById('available');
@@ -309,6 +295,11 @@ function createCards(data, containerR, typeRequest){
             joinButton.classList.add('card-span-button')
             joinButton.innerText = 'Unirme'
             cardContainer.append(joinButton)
+
+            const classDetail = document.createElement('p')
+            classDetail.classList.add('class-detail')
+            classDetail.innerText = element.classDetails['session_name']
+            cardBodyContainer.append(classDetail)
 
             joinButton.addEventListener("click", () => {
                 window.open(zoomUrl, "_blank")
