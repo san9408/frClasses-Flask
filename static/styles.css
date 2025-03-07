@@ -277,17 +277,18 @@ body::before {
     display: flex;
     justify-content: center;
     max-height: 30px;
+    /* background-image: url(./icons/arrow.png); */
 }
 
 .arrow{
-    color: var(--button-purple);
     cursor: pointer;
     display: none;
+    width: 50px;
+    height: 40px;
 }
 
 .arrow-icon:hover{
-    color: var(--button-hoover);
-    stroke-width: 3;
+    box-shadow: rgba(0, 0, 0, 0.47) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
 }
 
 

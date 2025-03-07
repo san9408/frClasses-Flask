@@ -28,6 +28,19 @@ def log_in():
         return jsonify(classes)
     else:
         return jsonify({"error": "Formato no válido, usa JSON"}), 415
+    
+# @app.route("/getClassDetails", methods=["POST"])
+# def log_in(classId):
+#     url_get_class_details = f"https://back-spc.azurewebsites.net/api/v1/class/{class_id}/session"
+
+#     if request.is_json:
+#         data = request.get_json()
+#         userId = data.get("userId")
+#         token = log_in_token(userId)
+#         classes = get_classes(token, url_get_class_details)
+#         return jsonify(classes)
+#     else:
+#         return jsonify({"error": "Formato no válido, usa JSON"}), 415
 
 def log_in_token(user):
     url_get_token = 'https://back-spc.azurewebsites.net/api/v1/auth/login'

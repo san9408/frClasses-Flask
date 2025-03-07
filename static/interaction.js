@@ -106,6 +106,20 @@ function logIn(userId){
     })
 }
 
+// function logIn(classId){
+
+//     fetch('/getClassDetails', {
+//         method: 'POST', 
+//         headers: { 
+//             'Content-Type': 'application/json'
+//         }, 
+//         body: JSON.stringify({'class': classId})})
+//     .then(response => response.json())
+//     .then(data => {
+
+//     })
+// }
+
 function addFilterEventListeners(){
 
     const availRadioButtons = document.getElementById('available');
@@ -281,7 +295,11 @@ function createCards(data, containerR, typeRequest){
             spanButton.classList.add('card-span-button')
             spanButton.innerText = 'Registrar'
             cardContainer.append(spanButton)
-        }
+            }
+
+          if (typeRequest!='avail'){
+            //Function for calling class by id and get info about the class
+          }
 
       })
 
