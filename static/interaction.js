@@ -283,7 +283,8 @@ function createCards(data, containerR, typeRequest){
           const classDate = document.createElement('p')
           classDate.classList.add('card-body')
           let formatedDate = formatDate(element.start_date)
-          classDate.innerText = `El ${formatedDate.formatedDate} a las ${formatedDate.formatedHour} hora Colombia` 
+          let bodyCardTxt = `El ${formatedDate.formatedDate} a las ${formatedDate.formatedHour} hora Colombia`
+          classDate.innerText = bodyCardTxt
          
           cardBodyContainer.append(title, classDate)
           cardContainer.append(cardBodyContainer)
@@ -298,7 +299,20 @@ function createCards(data, containerR, typeRequest){
             }
 
           if (typeRequest!='avail'){
-            //Function for calling class by id and get info about the class
+
+            var zoomId = element.location_name.match(/\d{3}-\d{3}-\d{4}/)
+            zoomId = zoomId[0].replace(/-/g, "")
+            let zoomUrl = `zoommtg://zoom.us/join?action=join&confno=${zoomId}&pwd=1` 
+            console.log(zoomUrl)
+
+            const joinButton = document.createElement('div')
+            joinButton.classList.add('card-span-button')
+            joinButton.innerText = 'Unirme'
+            cardContainer.append(joinButton)
+
+            joinButton.addEventListener("click", () => {
+                window.open(zoomUrl, "_blank")
+            })
           }
 
       })
