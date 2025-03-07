@@ -336,12 +336,15 @@ body::before {
   }
 
   .details{
-    border-radius: 5px;
     padding: 10px;
-    margin: 10px 0;
     cursor: pointer;
     color: rgba(51, 65, 85, 1);
     font-size: 15px;
+    border-bottom: solid 0.5px var(--button-purple);
+}
+
+.details:first-of-type{
+    border-top: solid 0.5px var(--button-purple);
 }
 
 .details[open] {
@@ -356,6 +359,10 @@ body::before {
 .details:hover{
     background-color: #ad538966;
 }
+
+summary::marker {
+    color: var(--button-hoover);
+  }
 
 .summary:hover{
     color: var(--button-hoover);
