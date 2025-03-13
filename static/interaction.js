@@ -1,5 +1,6 @@
 
 let app = document.querySelector('#app')
+let dataClasses = {}
 
 window.getInputValue = function(event){
     event.preventDefault()
@@ -15,25 +16,31 @@ window.getInputValue = function(event){
 
 function formatDate(dateISO) {
 
-    let myDate = new Date(dateISO);
+    let myDate = new Date(dateISO)
 
     let optionsDate = { 
         weekday: 'long', 
         day: 'numeric', 
         month: 'long', 
         year: 'numeric', 
-    };
+    }
+
+    let optionsDateShort = {  
+        day: 'numeric', 
+        month: 'short', 
+    }
 
     let optionsHour = { 
         hour: '2-digit', 
         minute: '2-digit', 
         // hour12: true, 
-    };
+    }
 
-    let formatedDate = myDate.toLocaleDateString('es-ES', optionsDate);
-    let formatedHour = myDate.toLocaleTimeString('es-ES', optionsHour);
+    let formatedDate = myDate.toLocaleDateString('es-ES', optionsDate)
+    let formatedDateShort = myDate.toLocaleDateString('es-ES', optionsDateShort)
+    let formatedHour = myDate.toLocaleTimeString('es-ES', optionsHour)
 
-    return {formatedDate: formatedDate, formatedHour: formatedHour};
+    return {formatedDate: formatedDate, formatedHour: formatedHour, formatedDateShort: formatedDateShort}
 }
 
 function formatData(data){
@@ -41,23 +48,21 @@ function formatData(data){
   const grouped = data.reduce((acc, item) => {
     const dateKey = item.start_date.split("T")[0]
     if (!acc[dateKey]) {
-      acc[dateKey] = [];
+      acc[dateKey] = []
     }
-    acc[dateKey].push(item);
-    return acc;
-  }, {});
+    acc[dateKey].push(item)
+    return acc
+  }, {})
   
   const sortedGrouped = Object.keys(grouped)
     .sort()
     .map(date => ({
       start_date: date,
       elements: grouped[date]
-    }));
+    }))
 
     return sortedGrouped
 }
-
-let dataClasses = {}
 
 function logIn(userId){
 
@@ -71,7 +76,9 @@ function logIn(userId){
     .then(data => {
 
         dataClasses = data
-        console.log(data)
+        console.log(dataClasses)
+
+        sessionStorage.setItem("token", dataClasses.token)
 
         if (dataClasses.available.length > 0){
 
@@ -85,6 +92,7 @@ function logIn(userId){
             //Llamar funcion createCards() enviando data para iterar
             createCards(newDataAvailable, container, 'avail')
             addFilterEventListeners()
+            addEventListenersFilterButtons()
 
         } else if (dataClasses.reserved.length > 0){
 
@@ -92,23 +100,103 @@ function logIn(userId){
             let newDataReserved = formatData(dataClasses.reserved)
             console.log('reserved: ', newDataReserved)
 
-            newDataReserved.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+            newDataReserved.sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
             //Llamar funcion para crear container principales
             let container = createContainersAndFilters('reserved')
             //Llamar funcion createCards() enviando data para iterar
             createCards(newDataReserved, container, 'reserved')
             addFilterEventListeners()
+            addEventListenersFilterButtons()
 
             } else {
             window.alert("No hay clases disponibles")
         }
-
     })
+}
+
+function registerClass(classId){
+
+    fetch('/reserve', {
+        method: 'POST', 
+        headers: { 
+            'Content-Type': 'application/json'
+        }, 
+        body: JSON.stringify({'classId': classId, 'token': token})})
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+    })}
+
+function addEventListenersRegisterButtons() {
+    const RegisterButtons = document.getElementsByClassName('register-button')
+
+    for (let item of RegisterButtons) {
+        item.addEventListener("click", function() {
+            let classId = this.id
+            let classInfo = document.getElementById(`body_${classId}`).innerHTML
+
+            if (window.confirm(`¿Quieres registrarte a esta clase?\n${classInfo}`)) {
+                console.log(`Registrando en la clase con ID: ${classId}`)
+                //registerClass(classId)
+            }
+        })
+    }
+}
+
+function addEventListenersFilterButtons(){
+
+    const filterButtons = document.getElementsByClassName('filterButton')
+    const filtersActivated = []
+
+    for (let item of filterButtons) {
+        item.addEventListener("click", function(){
+
+            let clickedFilter = 'clickedFilter'
+            let isSelected = item.classList.contains(clickedFilter)
+
+           if (!isSelected) {
+            item.classList.add(clickedFilter)
+            filtersActivated.push(item.innerHTML)
+            applyFilters(filtersActivated)
+           } else {
+            item.classList.remove(clickedFilter)
+            let index = filtersActivated.indexOf(item.innerHTML)
+            filtersActivated.splice(index, 1)
+            applyFilters(filtersActivated)
+           }
+            
+        })
+    }
+}
+
+function applyFilters(ids){
+
+    let classsList = document.getElementsByClassName('details')
+
+    for (let item of classsList) {
+        
+        let itemId = item.id
+        let isInSelectedList = ids.includes(itemId)
+        
+        if (ids.length === 0){
+
+            item.classList.remove("hiddenDetails")
+        } else {
+
+            if (!isInSelectedList) {
+                item.classList.add("hiddenDetails")
+            } else {
+                item.classList.remove("hiddenDetails")
+            }  
+        }
+    }
 }
 
 function addFilterEventListeners(){
 
-    const availRadioButtons = document.getElementById('available');
+    const availRadioButtons = document.getElementById('available')
+    const reservedRadioButtons = document.getElementById('reserved')
+
     availRadioButtons.addEventListener("click", () => {
 
         removeMainContainer()
@@ -117,10 +205,10 @@ function addFilterEventListeners(){
         let newDataAvailable = formatData(dataClasses.available)
         console.log('available: ', newDataAvailable)
         createCards(newDataAvailable, containerR, 'avail')
+        addEventListenersFilterButtons()
 
     })
 
-    const reservedRadioButtons = document.getElementById('reserved');
     reservedRadioButtons.addEventListener("click", () => {
 
         removeMainContainer()
@@ -129,8 +217,10 @@ function addFilterEventListeners(){
         let newDataReserved = formatData(dataClasses.reserved)
         console.log('reserved: ', newDataReserved)
         createCards(newDataReserved, containerR, 'reserved')
+        addEventListenersFilterButtons()
 
-})
+
+    })
 
 }
 
@@ -144,13 +234,6 @@ function createContainersAndFilters(type){
         // Create main container for filters
         const containerResults = document.createElement('div')
         containerResults.classList.add('main-container-results')
-        
-        // // Create main container for filters
-        // const containerMainFilters = document.createElement('div')
-        // containerMainFilters.setAttribute('x-data', 'scheduleFilter()')
-        // containerMainFilters.setAttribute('x-init', 'init()')
-        // containerMainFilters.classList.add('container-filters-results')
-        // containerResults.appendChild(containerMainFilters)
 
 
         if (!filtersExist){
@@ -166,6 +249,7 @@ function createContainersAndFilters(type){
             inputFilter1.type = "radio"
             inputFilter1.name = "radio"
             inputFilter1.id = "available"
+
             if (typeRequest==='avail') {
                 inputFilter1.checked = true
             }
@@ -232,88 +316,97 @@ function createCards(data, containerR, typeRequest){
     console.log(data)
 
     data.forEach((item) => {
-      const details = document.createElement('details')
-      details.classList.add('details')
+        const filterButtons = document.createElement('button')
+        filterButtons.classList.add('filterButton')
+        let formatedDate = formatDate(item.start_date)
+        filterButtons.innerText = formatedDate.formatedDateShort
+        containerR.append(filterButtons) 
+    })
 
+    data.forEach((item) => {
 
-      const summary = document.createElement('summary')
-      summary.classList.add('summary')
-      let formatedDate = formatDate(item.start_date)
-      summary.innerText = `Clases para ${formatedDate.formatedDate}`               
+        const details = document.createElement('details')
+        details.classList.add('details')
 
-      const elements = item.elements
+        const summary = document.createElement('summary')
+        summary.classList.add('summary')
+        let formatedDate = formatDate(item.start_date)
+        details.id =formatedDate.formatedDateShort
+        summary.innerText = `Clases para ${formatedDate.formatedDate}`   
+        
+        details.append(summary)
+        containerR.append(details) 
 
-      elements.forEach((element)=>{
+        const elements = item.elements
 
-          const container = document.createElement('div')
-          container.classList.add('container')
+        elements.forEach((element)=>{
 
-          const cardBar = document.createElement('div')
-          cardBar.classList.add('card-bar')
-          container.append(cardBar)
-          
-          const cardContainer = document.createElement('div')
-          cardContainer.classList.add('card-container')
+            const container = document.createElement('div')
+            container.classList.add('container')
 
-          // const iconCalendarContainer = document.createElement('div')
-          // iconCalendarContainer.classList.add('card-icon-container')
-          // iconCalendarContainer.innerHTML = svgData
-          
-          const cardBodyContainer = document.createElement('div')
-          cardBodyContainer.classList.add('card-body-container')
-  
-          const title = document.createElement('h3')
-          title.classList.add('card-title')
-          title.innerText = element.teacher_name
-  
-          const classDate = document.createElement('p')
-          classDate.classList.add('card-body')
-          let formatedDate = formatDate(element.start_date)
-          let bodyCardTxt = `El ${formatedDate.formatedDate} a las ${formatedDate.formatedHour} hora Colombia`
-          classDate.innerText = bodyCardTxt
-         
-          cardBodyContainer.append(title, classDate)
-          cardContainer.append(cardBodyContainer)
-          container.append(cardContainer)
-          details.append(container)
+            const cardBar = document.createElement('div')
+            cardBar.classList.add('card-bar')
+            container.append(cardBar)
+            
+            const cardContainer = document.createElement('div')
+            cardContainer.classList.add('card-container')
+            
+            const cardBodyContainer = document.createElement('div')
+            cardBodyContainer.classList.add('card-body-container')
+    
+            const title = document.createElement('h3')
+            title.classList.add('card-title')
+            title.innerText = element.teacher_name
+    
+            const classDate = document.createElement('p')
+            classDate.classList.add('card-body')
+            classDate.id = `body_${element.id}`
+            let formatedDate = formatDate(element.start_date)
+            let bodyCardTxt = `El ${formatedDate.formatedDate} a las ${formatedDate.formatedHour} hora Colombia`
+            classDate.innerText = bodyCardTxt
+            
+            cardBodyContainer.append(title, classDate)
+            cardContainer.append(cardBodyContainer)
+            container.append(cardContainer)
+            details.append(container)
 
-          if (typeRequest==='avail'){
-            const spanButton = document.createElement('div')
-            spanButton.classList.add('card-span-button')
-            spanButton.innerText = 'Registrar'
-            cardContainer.append(spanButton)
+            if (typeRequest==='avail'){
+                const spanButton = document.createElement('div')
+                spanButton.classList.add('card-span-button')
+                spanButton.classList.add('register-button')
+                spanButton.innerText = 'Registrar'
+                spanButton.id = element.id
+                cardContainer.append(spanButton)
+                }
+
+            if (typeRequest!='avail'){
+
+                var zoomId = element.location_name.match(/\d{3}-\d{3}-\d{4}/)
+                zoomId = zoomId[0].replace(/-/g, "")
+                let zoomUrl = `zoommtg://zoom.us/join?action=join&confno=${zoomId}&pwd=1` 
+                console.log(zoomUrl)
+
+                const joinButton = document.createElement('div')
+                joinButton.classList.add('card-span-button')
+                joinButton.innerText = 'Unirme'
+                cardContainer.append(joinButton)
+
+                const classDetail = document.createElement('p')
+                classDetail.classList.add('class-detail')
+                classDetail.innerText = element.classDetails['session_name']
+                cardBodyContainer.append(classDetail)
+
+                joinButton.addEventListener("click", () => {
+                    window.open(zoomUrl, "_blank")
+                })
             }
 
-          if (typeRequest!='avail'){
-
-            var zoomId = element.location_name.match(/\d{3}-\d{3}-\d{4}/)
-            zoomId = zoomId[0].replace(/-/g, "")
-            let zoomUrl = `zoommtg://zoom.us/join?action=join&confno=${zoomId}&pwd=1` 
-            console.log(zoomUrl)
-
-            const joinButton = document.createElement('div')
-            joinButton.classList.add('card-span-button')
-            joinButton.innerText = 'Unirme'
-            cardContainer.append(joinButton)
-
-            const classDetail = document.createElement('p')
-            classDetail.classList.add('class-detail')
-            classDetail.innerText = element.classDetails['session_name']
-            cardBodyContainer.append(classDetail)
-
-            joinButton.addEventListener("click", () => {
-                window.open(zoomUrl, "_blank")
-            })
-          }
-
-      })
-
-      details.append(summary)
-      containerR.append(details)  
+        }) 
       
     })
     var arrowButton = document.querySelector('.arrow')
     arrowButton.style.display = 'block'
+    addEventListenersRegisterButtons()
 }
 
 function menuAnimation(){
@@ -335,7 +428,7 @@ let arrow = document.getElementById('arrow-down')
 
 arrow.addEventListener("click", (e) => {
     menuAnimationOut()
-  });
+  })
 
 function menuAnimationOut(){
     let myAnimation = anime({
@@ -363,4 +456,35 @@ function removeMainContainer(){
     let availabilityContainer = document.querySelector('.main-container-results')
     availabilityContainer.remove()
 }
+
+
+// const handleAgendar = () => {
+//     console.log(clasesPreseleccionadas[0]);
+//     var putClassRegistrationUrl = `${process.env.REACT_APP_API_URL}/api/v1/class/${clasesPreseleccionadas[0]}/registration`;
+//     fetch(putClassRegistrationUrl, {
+//       method: "PUT",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: "Bearer " + Cookies.get("token"),
+//       },
+//     })
+//       .then((response) => {
+//         if (!response.ok) {
+//           return response.json().then((data) => {
+//             throw new Error(data.message);
+//           });
+//         }
+//         Si la respuesta es exitosa, puedes continuar con el código aquí
+//         Ejemplo: showNotification("¡Éxito!", "La clase se ha registrado correctamente", "success");
+//         showNotification("Info", "Clase registrada", "success");
+//         setTimeout(() => {
+//           window.location.reload();
+//         }, 1000);
+//       })
+//       .catch((error) => {
+//         Aquí puedes mostrar el mensaje de error en una notificación o en algún otro lugar de tu interfaz de usuario
+//         showNotification("Error", error.message, "warning");
+//       });
+//   };
+//   /*
 
