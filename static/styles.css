@@ -404,6 +404,10 @@ summary::marker {
     font-weight: bold;
 }
 
+.card-class-id{
+    display: block;
+}
+
   /* Media queries */
   @media (width <= 500px) {
     /* … */

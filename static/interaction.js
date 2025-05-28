@@ -440,8 +440,13 @@ function createCards(data, containerR, typeRequest){
             let formatedDate = formatDate(element.start_date)
             let bodyCardTxt = `El ${formatedDate.formatedDate} a las ${formatedDate.formatedHour} hora Colombia`
             classDate.innerText = bodyCardTxt
+
+            const classCode = document.createElement('span')
+            classCode.classList.add('card-class-id')
+            classCode.innerText = `Codigo: ${element.id}`
+
             
-            cardBodyContainer.append(title, classDate)
+            cardBodyContainer.append(title, classDate, classCode)
             cardContainer.append(cardBodyContainer)
             container.append(cardContainer)
             details.append(container)
