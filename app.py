@@ -19,6 +19,7 @@ def log_in():
     url_get_class = f'https://back-spc.azurewebsites.net/api/v1/class?start_date={date_formated}&type=REGULAR'
     url_get_reserved_class = f'https://back-spc.azurewebsites.net/api/v1/class?start_date={date_formated}&type=REGISTERED'
     #Surl_get_class_details = f"https://back-spc.azurewebsites.net/api/v1/class/{class_id}/session"
+    #https://us06web.zoom.us/my/salon115?pwd=V0lmWFRRL0R6Tm56QTdRUHNoMWI3QT09
 
     if request.is_json:
         data = request.get_json()
@@ -28,6 +29,24 @@ def log_in():
         return jsonify(classes)
     else:
         return jsonify({"error": "Formato no válido, usa JSON"}), 415
+
+@app.route("/reserve", methods=["POST"])
+def reserve_class():
+    data = request.get_json()
+    class_id = data.get('classId')
+    token = data.get('token')  
+
+    if not class_id or not token:
+        return jsonify({'error': 'Faltan datos'}), 400 
+    
+    url_reserve_class = f"https://back-spc.azurewebsites.net//api/v1/class/{class_id}/registration"
+    put_reserve_class = requests.put(url_reserve_class, headers={'Authorization': 'Bearer ' + token})
+    print(response_reserve_class)
+    response_reserve_class = json.loads(put_reserve_class.text)
+    
+    #response_reserve_class = jsonify({'classs': 'scheduled'})
+
+    return response_reserve_class
     
 def log_in_token(user):
     url_get_token = 'https://back-spc.azurewebsites.net/api/v1/auth/login'
@@ -49,6 +68,7 @@ def get_classes(token, class_url_availabe, class_url_reserved):
     response_class_reserved = json.loads(get_class_reserved.text)
     classes['available'] = response_class
     classes['reserved'] = response_class_reserved
+    classes['token'] = token
 
     for class_item in classes['reserved']:
         details = get_class_details(class_item['id'], token)

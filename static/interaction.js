@@ -43,26 +43,62 @@ function formatDate(dateISO) {
     return {formatedDate: formatedDate, formatedHour: formatedHour, formatedDateShort: formatedDateShort}
 }
 
-function formatData(data){
+// function formatData(data){
 
-  const grouped = data.reduce((acc, item) => {
-    const dateKey = item.start_date.split("T")[0]
-    if (!acc[dateKey]) {
-      acc[dateKey] = []
-    }
-    acc[dateKey].push(item)
-    return acc
-  }, {})
+//   const grouped = data.reduce((acc, item) => {
+//     const dateKey = item.start_date.split("T")[0]
+//     if (!acc[dateKey]) {
+//       acc[dateKey] = []
+//     }
+//     acc[dateKey].push(item)
+//     return acc
+//   }, {})
   
-  const sortedGrouped = Object.keys(grouped)
-    .sort()
-    .map(date => ({
-      start_date: date,
-      elements: grouped[date]
-    }))
+//   const sortedGrouped = Object.keys(grouped)
+//     .sort()
+//     .map(date => ({
+//       start_date: date,
+//       elements: grouped[date]
+//     }))
 
+//     return sortedGrouped
+// }
+
+function formatData(data) {
+    const grouped = data.reduce((acc, item) => {
+      const dateKey = item.start_date.split("T")[0]
+      const time = item.start_date.split("T")[1].split(":")[0]
+      const hour = parseInt(time, 10)
+  
+      let period = ""
+      if (hour >= 6 && hour < 12) {
+        period = "morning"
+      } else if (hour >= 12 && hour < 18) {
+        period = "afternoon"
+      } else {
+        period = "evening"
+      }
+  
+      const newItem = { ...item, period }
+  
+      if (!acc[dateKey]) {
+        acc[dateKey] = []
+      }
+      acc[dateKey].push(newItem)
+      
+      return acc
+    }, {})
+  
+  
+    const sortedGrouped = Object.keys(grouped)
+      .sort()
+      .map(date => ({
+        start_date: date,
+        elements: grouped[date]
+      }))
+  
     return sortedGrouped
-}
+  }
 
 function logIn(userId){
 
@@ -81,7 +117,7 @@ function logIn(userId){
         sessionStorage.setItem("token", dataClasses.token)
 
         if (dataClasses.available.length > 0){
-
+            
             //formatear array
             let newDataAvailable = formatData(dataClasses.available)
             console.log('available: ', newDataAvailable)
@@ -114,7 +150,7 @@ function logIn(userId){
     })
 }
 
-function registerClass(classId){
+function registerClass(classId, token){
 
     fetch('/reserve', {
         method: 'POST', 
@@ -125,6 +161,7 @@ function registerClass(classId){
     .then(response => response.json())
     .then(data => {
         console.log(data)
+        console.log(`Registrando en la clase con ID: ${classId}`)
     })}
 
 function addEventListenersRegisterButtons() {
@@ -136,8 +173,7 @@ function addEventListenersRegisterButtons() {
             let classInfo = document.getElementById(`body_${classId}`).innerHTML
 
             if (window.confirm(`¿Quieres registrarte a esta clase?\n${classInfo}`)) {
-                console.log(`Registrando en la clase con ID: ${classId}`)
-                //registerClass(classId)
+                registerClass(classId, dataClasses['token'])
             }
         })
     }
@@ -155,39 +191,64 @@ function addEventListenersFilterButtons(){
             let isSelected = item.classList.contains(clickedFilter)
 
            if (!isSelected) {
-            item.classList.add(clickedFilter)
-            filtersActivated.push(item.innerHTML)
-            applyFilters(filtersActivated)
+                item.classList.add(clickedFilter)
+                filtersActivated.push(item.innerHTML)
+                applyFilters(filtersActivated)
            } else {
-            item.classList.remove(clickedFilter)
-            let index = filtersActivated.indexOf(item.innerHTML)
-            filtersActivated.splice(index, 1)
-            applyFilters(filtersActivated)
+                item.classList.remove(clickedFilter)
+                let index = filtersActivated.indexOf(item.innerHTML)
+                filtersActivated.splice(index, 1)
+                applyFilters(filtersActivated)
            }
             
         })
     }
 }
 
+// function applyFilters(ids){
+
+//     let classsList = document.getElementsByClassName('details')
+
+//     for (let item of classsList) {
+        
+//         let itemId = item.id
+//         let isInSelectedList = ids.includes(itemId)
+        
+//         if (ids.length === 0){
+
+//             item.classList.remove("hiddenDetails")
+//         } else {
+
+//             if (!isInSelectedList) {
+//                 item.classList.add("hiddenDetails")
+//             } else {
+//                 item.classList.remove("hiddenDetails")
+//             }  
+//         }
+//     }
+// }
+
 function applyFilters(ids){
 
-    let classsList = document.getElementsByClassName('details')
+    let classsList = document.getElementsByClassName('container')
 
     for (let item of classsList) {
-        
-        let itemId = item.id
-        let isInSelectedList = ids.includes(itemId)
-        
+
         if (ids.length === 0){
 
             item.classList.remove("hiddenDetails")
+    
         } else {
+        
+            for (let period in ids){
+                let isPeriodinClassSet = item.className.includes(ids[period])
 
-            if (!isInSelectedList) {
-                item.classList.add("hiddenDetails")
-            } else {
-                item.classList.remove("hiddenDetails")
-            }  
+                if (!isPeriodinClassSet){
+                    item.classList.add("hiddenDetails")
+                } else {
+                    item.classList.remove("hiddenDetails")
+                }                  
+            }
         }
     }
 }
@@ -315,26 +376,40 @@ function createCards(data, containerR, typeRequest){
     // Loop for creating cards
     console.log(data)
 
-    data.forEach((item) => {
+    const periods = ['morning', 'afternoon', 'night']
+
+    periods.forEach((item) => {
         const filterButtons = document.createElement('button')
         filterButtons.classList.add('filterButton')
-        let formatedDate = formatDate(item.start_date)
-        filterButtons.innerText = formatedDate.formatedDateShort
+        filterButtons.innerText = item
         containerR.append(filterButtons) 
     })
+
+    // data.forEach((item) => {
+    //     const filterButtons = document.createElement('button')
+    //     filterButtons.classList.add('filterButton')
+    //     let formatedDate = formatDate(item.start_date)
+    //     filterButtons.innerText = formatedDate.formatedDateShort
+    //     containerR.append(filterButtons) 
+    // })
 
     data.forEach((item) => {
 
         const details = document.createElement('details')
         details.classList.add('details')
+        details.setAttribute('open','')
 
         const summary = document.createElement('summary')
         summary.classList.add('summary')
         let formatedDate = formatDate(item.start_date)
         details.id =formatedDate.formatedDateShort
-        summary.innerText = `Clases para ${formatedDate.formatedDate}`   
+        summary.innerText = `Clases para ${formatedDate.formatedDate}`
         
-        details.append(summary)
+        const counter = document.createElement('div')
+        counter.classList.add('counter')
+        //llamar funcion para contar cuantos 'container' hay
+        
+        details.append(summary, counter)
         containerR.append(details) 
 
         const elements = item.elements
@@ -343,6 +418,7 @@ function createCards(data, containerR, typeRequest){
 
             const container = document.createElement('div')
             container.classList.add('container')
+            container.classList.add(element.period)
 
             const cardBar = document.createElement('div')
             cardBar.classList.add('card-bar')
@@ -404,10 +480,15 @@ function createCards(data, containerR, typeRequest){
         }) 
       
     })
+    // Llamar funcion para contar
     var arrowButton = document.querySelector('.arrow')
     arrowButton.style.display = 'block'
     addEventListenersRegisterButtons()
 }
+
+// function countElments(){
+
+// }
 
 function menuAnimation(){
     let w = window.innerWidth
@@ -458,33 +539,4 @@ function removeMainContainer(){
 }
 
 
-// const handleAgendar = () => {
-//     console.log(clasesPreseleccionadas[0]);
-//     var putClassRegistrationUrl = `${process.env.REACT_APP_API_URL}/api/v1/class/${clasesPreseleccionadas[0]}/registration`;
-//     fetch(putClassRegistrationUrl, {
-//       method: "PUT",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Authorization: "Bearer " + Cookies.get("token"),
-//       },
-//     })
-//       .then((response) => {
-//         if (!response.ok) {
-//           return response.json().then((data) => {
-//             throw new Error(data.message);
-//           });
-//         }
-//         Si la respuesta es exitosa, puedes continuar con el código aquí
-//         Ejemplo: showNotification("¡Éxito!", "La clase se ha registrado correctamente", "success");
-//         showNotification("Info", "Clase registrada", "success");
-//         setTimeout(() => {
-//           window.location.reload();
-//         }, 1000);
-//       })
-//       .catch((error) => {
-//         Aquí puedes mostrar el mensaje de error en una notificación o en algún otro lugar de tu interfaz de usuario
-//         showNotification("Error", error.message, "warning");
-//       });
-//   };
-//   /*
 

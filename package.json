@@ -1,0 +1,14 @@
+{
+  "name": "fr-canadian-classes",
+  "version": "1.0.0",
+  "description": "na",
+  "main": "interaction.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Santiago Cardenas",
+  "license": "MIT",
+  "dependencies": {
+    "animejs": "^3.2.2"
+  }
+}
